@@ -1,0 +1,33 @@
+train:
+  epoch: 30
+  snapshot_interval: 100
+  batchsize: 16
+  validsize: 4
+  mask: false
+
+dataset:
+  extension: ".png"
+  train_size: 256
+  valid_size: 256
+  color_space: "rgb"
+  line_space: "rgb"
+  line_method: ["xdog", "pencil", "blend"]
+
+model:
+  generator:
+    in_ch: 6
+    lr: 0.0002
+    b1: 0.5
+    b2: 0.99
+    mode: "train"
+  discriminator:
+    lr: 0.0002
+    b1: 0.5
+    b2: 0.99
+    mode: "train"
+
+loss:
+  content: 10.0
+  adv: 1.0
+  gp: 0.5
+  center: "zero"

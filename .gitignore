@@ -1,0 +1,7 @@
+.DS_Store
+*.pyc
+
+Adeleine/static/*.png
+Adeleine/static/colorjoe
+__pycache__/
+session/
