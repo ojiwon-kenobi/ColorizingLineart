@@ -1,4 +1,4 @@
-https://github.com/SerialLain3170/Colorization
+original src: https://github.com/SerialLain3170/Colorization
 ## References
 - [XDoG: An eXtended difference-of-Gaussians compendium including advanced image stylization](https://users.cs.northwestern.edu/~sco590/winnemoeller-cag2012.pdf)
 - [sketchKeras](https://github.com/lllyasviel/sketchKeras)
