@@ -99,8 +99,10 @@ class Trainer:
               iteration: int,
               validsize: int,
               v_list: List[torch.Tensor]):
+        print("saving generator")
         torch.save(self.gen.state_dict(),
                    f"{self.modeldir}/generator_{iteration}.pt")
+        print("saving discriminator")
         torch.save(self.dis.state_dict(),
                    f"{self.modeldir}/discriminator_{iteration}.pt")
 
