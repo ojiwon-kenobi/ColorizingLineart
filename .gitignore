@@ -5,4 +5,5 @@ Adeleine/static/*.png
 Adeleine/static/colorjoe
 __pycache__/
 session/
-data/
+original_data/
+*/data/
