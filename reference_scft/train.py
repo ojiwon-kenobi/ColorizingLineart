@@ -15,7 +15,6 @@ from loss import SCFTLossCalculator
 from visualize import Visualizer
 from utils import session
 
-
 class Trainer:
     def __init__(self,
                  config,
