@@ -1,9 +1,9 @@
 .DS_Store
 *.pyc
-
-Adeleine/static/*.png
+*.ipynb_checkpoints
 Adeleine/static/colorjoe
 __pycache__/
 session/
 original_data/
 */data/
+
