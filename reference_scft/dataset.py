@@ -35,7 +35,7 @@ class IllustDataset(Dataset):
                  tgt_perturbation=0.2):
 
         self.data_path = data_path
-        self.pathlist = glob.glob(r"/content/originals/512images/*")[:512]
+        self.pathlist = glob.glob(r"/content/originals/linearts/quantized/*")
         print(len(self.pathlist))
         self.train_list, self.val_list = self._train_val_split(self.pathlist)
         self.train_len = len(self.train_list)
@@ -47,7 +47,7 @@ class IllustDataset(Dataset):
         self.color_space = color_space
         self.line_space = line_space
 
-        self.sketch_path = glob.glob(r"/content/originals/512linearts/*")[:512]
+        self.sketch_path = glob.glob(r"/content/originals/images/denoised_linearts/*")
         print("2", len(self.sketch_path))
 
         self.src_per = src_perturbation
@@ -68,8 +68,8 @@ class IllustDataset(Dataset):
     @staticmethod
     def _train_val_split(pathlist: List) -> (List, List):
         split_point = int(len(pathlist) * 0.995)
-        train = pathlist[:256]
-        val = pathlist[256:]
+        train = pathlist[:split_point]
+        val = pathlist[split_point:]
 
         return train, val
 

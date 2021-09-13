@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use("Agg")
 import pylab
 
+
 class Visualizer:
     def __init__(self, color_space: str):
         self.color_space = color_space
@@ -20,6 +21,7 @@ class Visualizer:
             tmp = tmp[0]*127.5 + 127.5
             tmp = tmp.astype(np.uint8)
             tmp = cv.cvtColor(tmp, cv.COLOR_GRAY2RGB)
+
             return tmp
 
         if self.color_space == "yuv":
@@ -60,6 +62,7 @@ class Visualizer:
             self._save(v_list[1][index], width, 3*index+2, outdir, epoch)
             self._save(y[index], width, 3*index+3, outdir, epoch)
 
+
 class TestVisualizer:
     def __init__(self):
         pass
@@ -67,6 +70,7 @@ class TestVisualizer:
     @staticmethod
     def _convert(img_array):
         tmp = np.clip(img_array*127.5 + 127.5, 0, 255).transpose(1, 2, 0).astype(np.uint8)
+
         return tmp
 
     def _save(self, img, width, index, outdir, epoch):
@@ -76,15 +80,7 @@ class TestVisualizer:
         pylab.axis("off")
         pylab.savefig(f"{outdir}/visualize_{epoch}.png")
 
-    def __call__(
-    self, 
-    y, 
-    y_comp, 
-    color, 
-    line, 
-    outdir, 
-    epoch, 
-    testsize):
+    def __call__(self, y, y_comp, color, line, outdir, epoch, testsize):
         width = testsize
         pylab.rcParams['figure.figsize'] = (16.0, 16.0)
         pylab.clf()

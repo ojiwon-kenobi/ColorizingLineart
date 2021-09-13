@@ -3,9 +3,10 @@ import cv2 as cv
 
 from typing import List
 from typing_extensions import Literal
+from xdog import XDoG
 from pathlib import Path
 
-LineArt = List[Literal["digital"]]
+LineArt = List[Literal["xdog", "pencil", "digital", "blend"]]
 
 
 class BasicProtocol:

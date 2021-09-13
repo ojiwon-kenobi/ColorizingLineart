@@ -19,5 +19,5 @@ def session(session_name):
     outdir_path.mkdir(exist_ok=True, parents=True)
 
     shutil.copy("param.yaml", session_path)
-
+    open(session_path / "ckpts/loss.txt", 'a').close()
     return outdir_path, modeldir_path

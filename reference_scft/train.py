@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import argparse
 import pprint
+import os
 
 from typing import List, Dict
 from pathlib import Path
@@ -14,6 +15,7 @@ from dataset import IllustDataset
 from loss import SCFTLossCalculator
 from visualize import Visualizer
 from utils import session
+import contextlib
 
 class Trainer:
     def __init__(self,
@@ -22,7 +24,7 @@ class Trainer:
                  modeldir,
                  data_path,
                  sketch_path,
-                 ):
+                 iteration):
 
         self.train_config = config["train"]
         self.data_config = config["dataset"]
@@ -31,7 +33,6 @@ class Trainer:
 
         self.outdir = outdir
         self.modeldir = modeldir
-
         self.dataset = IllustDataset(data_path,
                                      sketch_path,
                                      self.data_config["line_method"],
@@ -44,14 +45,32 @@ class Trainer:
                                      self.data_config["tgt_perturbation"])
         print(self.dataset)
 
-        gen = Generator()
-        self.gen, self.gen_opt = self._setting_model_optim(gen,
-                                                           model_config["generator"])
+        if (iteration == 0):
+          gen = Generator()
+          self.gen, self.gen_opt = self._setting_model_optim(gen,
+                                                            model_config["generator"])
 
-        dis = Discriminator()
-        self.dis, self.dis_opt = self._setting_model_optim(dis,
-                                                           model_config["discriminator"])
+          dis = Discriminator()
+          self.dis, self.dis_opt = self._setting_model_optim(dis,
+                                                            model_config["discriminator"])
 
+        if (iteration>0):
+
+            print("continuing training at " + str(iteration) + " iteration. Loading models...")
+
+            self.gen = Generator().cuda()
+            self.gen.load_state_dict(torch.load(f"{self.modeldir}/generator_{iteration}.pt"))
+            
+            self.gen_opt = torch.optim.Adam(self.gen.parameters())
+            self.gen_opt.load_state_dict(torch.load(f"{self.modeldir}/gen_optimizer_{iteration}.pt"))
+            
+            self.dis = Discriminator().cuda()
+            self.dis.load_state_dict(torch.load(f"{self.modeldir}/discriminator_{iteration}.pt"))
+            
+            self.dis_opt = torch.optim.Adam(self.dis.parameters())
+            self.dis_opt.load_state_dict(torch.load(f"{self.modeldir}/dis_optimizer_{iteration}.pt"))
+
+        self.iteration = iteration
         self.vgg = Vgg19(requires_grad=False)
         self.vgg.cuda()
         self.vgg.eval()
@@ -89,21 +108,40 @@ class Trainer:
 
         report_dict = {}
         report_dict["epoch"] = f"{epoch}/{num_epochs}"
+        
         for k, v in loss_dict.items():
             report_dict[k] = f"{v:.4f}"
-
+        
         return report_dict
 
     def _eval(self,
               iteration: int,
               validsize: int,
               v_list: List[torch.Tensor]):
+        print()
         print("saving generator")
         torch.save(self.gen.state_dict(),
                    f"{self.modeldir}/generator_{iteration}.pt")
         print("saving discriminator")
         torch.save(self.dis.state_dict(),
                    f"{self.modeldir}/discriminator_{iteration}.pt")
+        print("saving generator optimizer")
+        torch.save(self.gen_opt.state_dict(),
+                   f"{self.modeldir}/gen_optimizer_{iteration}.pt")
+        print("saving discriminator optimizer")
+        torch.save(self.dis_opt.state_dict(),
+                   f"{self.modeldir}/dis_optimizer_{iteration}.pt")
+
+        #just to save space 
+        if (iteration > 1):
+          print("removing previous snapshot models")
+
+        with contextlib.suppress(FileNotFoundError):
+          previousFileIteration = iteration - self.train_config["snapshot_interval"]
+          os.remove(f"{self.modeldir}/generator_{previousFileIteration}.pt")
+          os.remove(f"{self.modeldir}/discriminator_{previousFileIteration}.pt")
+          os.remove(f"{self.modeldir}/gen_optimizer_{previousFileIteration}.pt")
+          os.remove(f"{self.modeldir}/dis_optimizer_{previousFileIteration}.pt")
 
         with torch.no_grad():
             y = self.gen(v_list[0], v_list[1])
@@ -149,16 +187,16 @@ class Trainer:
         loss["loss_content"] = con_loss.item()
         loss["loss_perceptual"] = perceptual_loss.item()
         loss["loss_style"] = style_loss.item()
-
         return loss
 
     def __call__(self):
-        iteration = 0
+        iteration = self.iteration
+        # starting_epoch = 0 if iteration == 0 else iteration / (self.data_config["validsize"]/ self.train_config["batchsize"])
         v_list = self._valid_prepare(self.dataset,
                                      self.train_config["validsize"],
                                      )
 
-        for epoch in range(self.train_config["epoch"]):
+        for epoch in range(0, self.train_config["epoch"]):
             dataloader = DataLoader(self.dataset,
                                     batch_size=self.train_config["batchsize"],
                                     shuffle=True,
@@ -166,7 +204,6 @@ class Trainer:
 
             with tqdm(total=len(self.dataset)) as pbar:
                 for index, data in enumerate(dataloader):
-                    iteration += 1
                     loss_dict = self._iter(data)
                     report_dict = self._build_dict(loss_dict,
                                                    epoch,
@@ -180,17 +217,30 @@ class Trainer:
                                    self.train_config["validsize"],
                                    v_list,
                                    )
-
-
+                    iteration += 1
+                    with open(self.modeldir/'loss.txt','a') as f:
+                        f.write("iteration " + str(iteration) + "| ")
+                        for k, v in loss_dict.items():
+                            f.write(k+": "+ str(report_dict[k]) + "    ")
+                        f.write("\n")
+                    f.close()
+            print("Epoch: ", epoch, "       iteration: ", iteration)
+                    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SCFT")
     parser.add_argument('--session', type=str, default='scft', help="session name")
     parser.add_argument('--data_path', type=Path, help="path containing color images")
     parser.add_argument('--sketch_path', type=Path, help="path containing sketch images")
+    parser.add_argument('--iteration_count', type=int, default=0, help='the starting iteration count')
+    parser.add_argument('--session_dir', type=Path, help='if we need to pull previously trained models')
+
     args = parser.parse_args()
 
-    outdir, modeldir = session(args.session)
-
+    if (args.iteration_count) == 0:
+        outdir, modeldir = session(args.session)
+    elif (args.iteration_count) > 0:
+        modeldir = args.session_dir / "ckpts"
+        outdir = args.session_dir / "vis"
     with open("param.yaml", "r") as f:
         config = yaml.safe_load(f)
         pprint.pprint(config)
@@ -199,5 +249,6 @@ if __name__ == "__main__":
                       outdir,
                       modeldir,
                       args.data_path,
-                      args.sketch_path)
+                      args.sketch_path,
+                      args.iteration_count)
     trainer()
