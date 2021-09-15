@@ -3,9 +3,7 @@ import cv2
 from scipy import ndimage
 import numpy as np
 import cv2
-import tensorflow as tf
 import numpy as np
-from helper import *
 import glob
 mod = load_model('mod.h5')
 
