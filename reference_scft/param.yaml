@@ -5,12 +5,12 @@ train:
     validsize: 12
 
 dataset:
-    extension: ".jpg"
-    train_size: 256
+    extension: ".png"
+    train_size: 358
     valid_size: 512
     color_space: "rgb"
     line_space: "rgb"
-    line_method: ["xdog", "pencil"]
+    line_method: ["xdog"]
     src_perturbation: 0.5
     tgt_perturbation: 0.2
 
