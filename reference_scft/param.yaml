@@ -6,7 +6,7 @@ train:
 
 dataset:
     extension: ".png"
-    train_size: 358
+    train_size: 384
     valid_size: 512
     color_space: "rgb"
     line_space: "rgb"

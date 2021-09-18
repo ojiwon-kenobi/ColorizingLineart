@@ -35,7 +35,7 @@ class IllustDataset(Dataset):
                  tgt_perturbation=0.2):
 
         self.data_path = data_path
-        self.pathlist = glob.glob(r"/content/originals/linearts/quantized/*")
+        self.pathlist = glob.glob(r"../../originals/images/quantized/*")
         print(len(self.pathlist))
         self.train_list, self.val_list = self._train_val_split(self.pathlist)
         self.train_len = len(self.train_list)
@@ -46,8 +46,7 @@ class IllustDataset(Dataset):
         self.line_process = LineProcessor(sketch_path, line_method)
         self.color_space = color_space
         self.line_space = line_space
-
-        self.sketch_path = glob.glob(r"/content/originals/images/denoised_linearts/*")
+        self.sketch_path = glob.glob(r"../../originals/linearts/denoised_linearts/*")
         print("2", len(self.sketch_path))
 
         self.src_per = src_perturbation
