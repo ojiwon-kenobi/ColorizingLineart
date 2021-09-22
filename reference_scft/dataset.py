@@ -66,7 +66,7 @@ class IllustDataset(Dataset):
 
     @staticmethod
     def _train_val_split(pathlist: List) -> (List, List):
-        split_point = int(len(pathlist) * 0.985)
+        split_point = int(len(pathlist) * 0.995)
         train = pathlist[:split_point]
         val = pathlist[split_point:]
 

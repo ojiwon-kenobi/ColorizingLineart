@@ -138,7 +138,7 @@ class Trainer:
 
         with contextlib.suppress(FileNotFoundError):
             #keep the two most recent models just cause I'm curious
-            previousFileIteration = iteration - self.train_config["snapshot_interval"] * 2 
+            previousFileIteration = iteration - self.train_config["snapshot_interval"]
             os.remove(f"{self.modeldir}/generator_{previousFileIteration}.pt")
             os.remove(f"{self.modeldir}/discriminator_{previousFileIteration}.pt")
             os.remove(f"{self.modeldir}/gen_optimizer_{previousFileIteration}.pt")
