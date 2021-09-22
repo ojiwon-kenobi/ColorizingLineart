@@ -1,7 +1,6 @@
 import numpy as np
 import cv2 as cv
 
-
 class XDoG:
     def __init__(self,
                  k_sigma=4.5,

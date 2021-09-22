@@ -37,8 +37,8 @@ class Trainer:
                                      sketch_path,
                                      self.data_config["line_method"],
                                      self.data_config["extension"],
-                                     self.data_config["train_size"],
-                                     self.data_config["valid_size"],
+                                     self.data_config["train_image_size"],
+                                     self.data_config["valid_image_size"],
                                      self.data_config["color_space"],
                                      self.data_config["line_space"],
                                      self.data_config["src_perturbation"],
@@ -54,7 +54,7 @@ class Trainer:
           self.dis, self.dis_opt = self._setting_model_optim(dis,
                                                             model_config["discriminator"])
 
-        if (iteration>0):
+        if (iteration>0): #continue training
 
             print("continuing training at " + str(iteration) + " iteration. Loading models...")
 
@@ -137,11 +137,12 @@ class Trainer:
           print("removing previous snapshot models")
 
         with contextlib.suppress(FileNotFoundError):
-          previousFileIteration = iteration - self.train_config["snapshot_interval"]
-          os.remove(f"{self.modeldir}/generator_{previousFileIteration}.pt")
-          os.remove(f"{self.modeldir}/discriminator_{previousFileIteration}.pt")
-          os.remove(f"{self.modeldir}/gen_optimizer_{previousFileIteration}.pt")
-          os.remove(f"{self.modeldir}/dis_optimizer_{previousFileIteration}.pt")
+            #keep the two most recent models just cause I'm curious
+            previousFileIteration = iteration - self.train_config["snapshot_interval"] * 2 
+            os.remove(f"{self.modeldir}/generator_{previousFileIteration}.pt")
+            os.remove(f"{self.modeldir}/discriminator_{previousFileIteration}.pt")
+            os.remove(f"{self.modeldir}/gen_optimizer_{previousFileIteration}.pt")
+            os.remove(f"{self.modeldir}/dis_optimizer_{previousFileIteration}.pt")
 
         with torch.no_grad():
             y = self.gen(v_list[0], v_list[1])
@@ -195,7 +196,7 @@ class Trainer:
         v_list = self._valid_prepare(self.dataset,
                                      self.train_config["validsize"],
                                      )
-
+    
         for epoch in range(0, self.train_config["epoch"]):
             dataloader = DataLoader(self.dataset,
                                     batch_size=self.train_config["batchsize"],
@@ -230,7 +231,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="SCFT")
     parser.add_argument('--session', type=str, default='scft', help="session name")
     parser.add_argument('--data_path', type=Path, help="path containing color images")
-    parser.add_argument('--sketch_path', type=Path, help="path containing sketch images")
+    parser.add_argument('--sketchKeras_path', type=Path, help="path containing sketchKeras images")
+    parser.add_argument('--digital_path', type=Path, help="path containing digital images")
     parser.add_argument('--iteration_count', type=int, default=0, help='the starting iteration count')
     parser.add_argument('--session_dir', type=Path, help='if we need to pull previously trained models')
 
@@ -249,6 +251,6 @@ if __name__ == "__main__":
                       outdir,
                       modeldir,
                       args.data_path,
-                      args.sketch_path,
+                      args.sketchKeras_path,
                       args.iteration_count)
     trainer()

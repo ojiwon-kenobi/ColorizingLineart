@@ -6,11 +6,11 @@ train:
 
 dataset:
     extension: ".png"
-    train_size: 384
-    valid_size: 512
+    train_image_size: 348
+    valid_image_size: 512
     color_space: "rgb"
     line_space: "rgb"
-    line_method: ["xdog"]
+    line_method: ["xdog", "pencil", "blend", "digital"]
     src_perturbation: 0.5
     tgt_perturbation: 0.2
 

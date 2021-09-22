@@ -12,7 +12,7 @@ from thin_plate_spline import warping_image
 from torchvision.transforms import ColorJitter
 from hint_processor import LineProcessor
 
-LineArt = List[Literal["xdog"]]
+LineArt = List[Literal["pencil"]]
 
 
 class IllustDataset(Dataset):
@@ -35,7 +35,7 @@ class IllustDataset(Dataset):
                  tgt_perturbation=0.2):
 
         self.data_path = data_path
-        self.pathlist = glob.glob(r"../../originals/images/quantized/*")
+        self.pathlist = glob.glob(r'{}'.format(data_path))
         print(len(self.pathlist))
         self.train_list, self.val_list = self._train_val_split(self.pathlist)
         self.train_len = len(self.train_list)
@@ -46,7 +46,7 @@ class IllustDataset(Dataset):
         self.line_process = LineProcessor(sketch_path, line_method)
         self.color_space = color_space
         self.line_space = line_space
-        self.sketch_path = glob.glob(r"../../originals/linearts/denoised_linearts/*")
+        self.sketch_path = glob.glob(r'{}'.format(sketch_path))
         print("2", len(self.sketch_path))
 
         self.src_per = src_perturbation
@@ -66,7 +66,7 @@ class IllustDataset(Dataset):
 
     @staticmethod
     def _train_val_split(pathlist: List) -> (List, List):
-        split_point = int(len(pathlist) * 0.995)
+        split_point = int(len(pathlist) * 0.985)
         train = pathlist[:split_point]
         val = pathlist[split_point:]
 

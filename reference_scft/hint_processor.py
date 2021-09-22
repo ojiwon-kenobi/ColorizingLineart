@@ -6,7 +6,7 @@ from typing_extensions import Literal
 from xdog import XDoG
 from pathlib import Path
 
-LineArt = List[Literal["xdog", "pencil", "digital", "blend"]]
+LineArt = List[Literal["xdog", "pencil"]]
 
 
 class BasicProtocol:
@@ -128,16 +128,19 @@ class LineSelector(BasicProtocol):
 
         return self.post_intensity.exec(blend)
 
+    def _digital_preprocess(self, path: Path) -> np.array:
+        return self._pencil_preprocess(path)
+
     def exec(self, path: Path) -> np.array:
         method = np.random.choice(self.line_method)
-
         if method == "xdog":
             img = self._xdog_preprocess(path)
         elif method == "pencil":
             img = self._pencil_preprocess(path)
         elif method == "blend":
             img = self._blend_preprocess(path, self.blend)
-
+        elif method == "digital":
+            img = self._digital_preprocess(path)
         return img
 
 
