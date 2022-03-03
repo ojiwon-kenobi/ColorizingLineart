@@ -1,6 +1,15 @@
 original src: https://github.com/SerialLain3170/Colorization
 
 **forked and modified with original author's permission**
+
+
+trained for 220,000 iterations. used kaggle as db, rented gpus and server on vast.ai. 
+Also tested code by using google colab pro and google appscripts.
+
+![example1](/assets/iter.png)
+![example2](/assets/iter2.png)
+
+
 ## References
 - [XDoG: An eXtended difference-of-Gaussians compendium including advanced image stylization](https://users.cs.northwestern.edu/~sco590/winnemoeller-cag2012.pdf)
 - [sketchKeras](https://github.com/lllyasviel/sketchKeras)
