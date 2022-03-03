@@ -3,10 +3,13 @@ original src: https://github.com/SerialLain3170/Colorization
 **forked and modified with original author's permission**
 
 
-trained for 220,000 iterations. used kaggle as db, rented gpus and server on vast.ai. 
-Also tested code by using google colab pro and google appscripts.
+The model was trained for 220,000 iterations. I used kaggle storage as my database, and rented gpus and a server on vast.ai. 
+I also tested scripts and code by using google colab pro and google appscripts.
 
+* lineart collected through sketchKeras and sourced from [ASCP](https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair) , color image from [ASCP](https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair), final product produced with trained model
 ![example1](/assets/iter.png)
+
+* lineart cleaned manually and sourced from twitter, color image from [ASCP](https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair), final product produced with trained model
 ![example2](/assets/iter2.png)
 
 
