@@ -1,9 +1,12 @@
+## Disclaimer:
 original src: https://github.com/SerialLain3170/Colorization
 
 **forked and modified with original author's permission**
 
+----------------------------
 
-The SCFT model was trained for 220,000 iterations. I used kaggle storage as my database, and rented gpus and a server on vast.ai. 
+## Note: 
+This SCFT model was trained for 220,000 iterations. I used kaggle storage as my database, and rented gpus and a server on vast.ai. 
 I also tested scripts and code by using google colab pro and google appscripts.
 
 * lineart collected through sketchKeras and sourced from [ASCP](https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair) , color image from [ASCP](https://www.kaggle.com/ktaebum/anime-sketch-colorization-pair), final product produced with trained model
